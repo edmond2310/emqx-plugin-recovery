@@ -1,0 +1,14 @@
+{application, emqx_plugin_recovery,
+ [{description, "EMQ X Plugin Recovery"},
+  {vsn, "git"},
+  {modules, []},
+  {registered, [emqx_plugin_recovery_sup]},
+  {applications, [kernel,stdlib]},
+  {mod, {emqx_plugin_recovery_app,[]}},
+  {env, []},
+  {licenses, ["Apache-2.0"]},
+  {maintainers, ["Team edmond2310"]},
+  {links, [{"Homepage", "https://emqx.io/"},
+           {"Github", "https://github.com/edmond2310/emqx-plugin-recovery"}
+          ]}
+ ]}.
