@@ -14,7 +14,7 @@
 %% limitations under the License.
 %%--------------------------------------------------------------------
 
--module(emqx_plugin_template_SUITE).
+-module(emqx_plugin_recovery_SUITE).
 
 -compile(export_all).
 
