@@ -1,0 +1,17 @@
+%%-*- mode: erlang -*-
+
+{mapping, "recovery.redis_host", "emqx_plugin_recovery.broker", [
+  {default, "192.168.205.116"},
+  {datatype, string}
+]}.
+
+{mapping, "recovery.redis_port", "emqx_plugin_recovery.broker", [
+  {default, "9092"},
+  {datatype, string}
+]}.
+
+{translation, "emqx_plugin_recovery.broker", fun(Conf) ->
+  RedisHost = cuttlefish:conf_get("recovery.redis_host", Conf),
+  RedisPort = cuttlefish:conf_get("recovery.redis_port", Conf),
+  [{host, RedisHost}, {port, RedisPort}]
+  end}.
