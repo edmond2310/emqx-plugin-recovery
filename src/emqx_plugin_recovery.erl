@@ -77,7 +77,7 @@ load(Env) ->
 %%--------------------------------------------------------------------
 
 on_client_connect(ConnInfo = #{clientid := ClientId}, Props, _Env) ->
-  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, recovery),
+  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, broker),
   RecoveryRedisHost = proplists:get_value(redis_host, BrokerValues),
   RecoveryRedisPort = proplists:get_value(redis_port, BrokerValues),
   io:format("===========================~n", []),
@@ -86,7 +86,7 @@ on_client_connect(ConnInfo = #{clientid := ClientId}, Props, _Env) ->
   {ok, Props}.
 
 on_client_connack(ConnInfo = #{clientid := ClientId}, Rc, Props, _Env) ->
-  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, recovery),
+  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, broker),
   RecoveryRedisHost = proplists:get_value(redis_host, BrokerValues),
   RecoveryRedisPort = proplists:get_value(redis_port, BrokerValues),
   io:format("===========================~n", []),
@@ -95,7 +95,7 @@ on_client_connack(ConnInfo = #{clientid := ClientId}, Rc, Props, _Env) ->
   {ok, Props}.
 
 on_client_connected(ClientInfo = #{clientid := ClientId}, ConnInfo, _Env) ->
-  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, recovery),
+  {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, broker),
   RecoveryRedisHost = proplists:get_value(redis_host, BrokerValues),
   RecoveryRedisPort = proplists:get_value(redis_port, BrokerValues),
   io:format("===========================~n", []),
