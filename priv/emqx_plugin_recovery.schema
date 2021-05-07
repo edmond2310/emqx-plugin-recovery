@@ -13,5 +13,5 @@
 {translation, "emqx_plugin_recovery.broker", fun(Conf) ->
   RedisHost = cuttlefish:conf_get("recovery.redis_host", Conf),
   RedisPort = cuttlefish:conf_get("recovery.redis_port", Conf),
-  [{host, RedisHost}, {port, RedisPort}]
+  [{redis_host, RedisHost}, {redis_port, RedisPort}]
   end}.
