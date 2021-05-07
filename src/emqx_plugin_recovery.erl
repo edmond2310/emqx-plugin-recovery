@@ -90,6 +90,7 @@ on_client_connected(ClientInfo = #{clientid := ClientId}, ConnInfo, _Env) ->
   {ok, BrokerValues} = application:get_env(emqx_plugin_recovery, recovery),
   RecoveryRedisHost = proplists:get_value(redis_host, BrokerValues),
   RecoveryRedisPort = proplists:get_value(redis_port, BrokerValues),
+  io:format("===========================~n", []),
   io:format("RecoveryRedisHost:~s, RecoveryRedisPort:~s~n", [RecoveryRedisHost, RecoveryRedisPort]),
   io:format("Client(~s) connected, ClientInfo:~n~p~n, ConnInfo:~n~p~n", [ClientId, ClientInfo, ConnInfo]).
 
