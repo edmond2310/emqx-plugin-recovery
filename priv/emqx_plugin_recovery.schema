@@ -10,8 +10,21 @@
   {datatype, string}
 ]}.
 
+{mapping, "recovery.redis_database", "emqx_plugin_recovery.broker", [
+  {default, 0},
+  {datatype, integer}
+]}.
+
+{mapping, "recovery.redis_password", "emqx_plugin_recovery.broker", [
+  {default, ""},
+  {datatype, string},
+  hidden
+]}.
+
 {translation, "emqx_plugin_recovery.broker", fun(Conf) ->
   RedisHost = cuttlefish:conf_get("recovery.redis_host", Conf),
   RedisPort = cuttlefish:conf_get("recovery.redis_port", Conf),
-  [{redis_host, RedisHost}, {redis_port, RedisPort}]
+  RedisDatabase = cuttlefish:conf_get("recovery.redis_database", Conf),
+  RedisPassword = cuttlefish:conf_get("recovery.redis_password", Conf),
+  [{redis_host, RedisHost}, {redis_port, RedisPort}, {redis_database, RedisDatabase}, {redis_password, RedisPassword}]
   end}.
