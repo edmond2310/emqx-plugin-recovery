@@ -93,7 +93,7 @@ on_client_connected(ClientInfo = #{clientid := ClientId}, ConnInfo, _Env) ->
   io:format("===========================~n", []),
   io:format("BrokerValues:~p~n", [BrokerValues]),
   io:format("RecoveryRedisHost:~s, RecoveryRedisPort:~s~n", [RecoveryRedisHost, RecoveryRedisPort]),
-  io:format("RecoveryRedisDatabase:(~s), RecoveryRedisPassword:(~s)~n", [RecoveryRedisDatabase, RecoveryRedisPassword]),
+  io:format("RecoveryRedisDatabase:(~w), RecoveryRedisPassword:(~s)~n", [RecoveryRedisDatabase, RecoveryRedisPassword]),
   io:format("Client(~s) connected, ClientInfo:~n~p~n, ConnInfo:~n~p~n", [ClientId, ClientInfo, ConnInfo]).
 
 on_client_disconnected(ClientInfo = #{clientid := ClientId}, ReasonCode, ConnInfo, _Env) ->
