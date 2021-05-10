@@ -20,6 +20,8 @@
 
 -emqx_plugin(?MODULE).
 
+-include("emqx_plugin_recovery.hrl").
+
 -export([ start/2
         , stop/1
         ]).

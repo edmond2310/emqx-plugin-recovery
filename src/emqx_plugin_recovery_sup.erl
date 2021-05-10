@@ -18,6 +18,8 @@
 
 -behaviour(supervisor).
 
+-include("emqx_plugin_recovery.hrl").
+
 -export([start_link/0]).
 
 -export([init/1]).
@@ -26,5 +28,8 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+    {ok, Server} = application:get_env(?APP, broker),
+    {ok, {{one_for_one, 10, 100}, pool_spec(Server)}}.
 
+pool_spec(Server) ->
+    [ecpool:pool_spec(?APP, ?APP, emqx_plugin_recovery_cli, Server)].
