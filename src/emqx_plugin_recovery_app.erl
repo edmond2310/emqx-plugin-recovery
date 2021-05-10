@@ -29,7 +29,7 @@
 start(_StartType, _StartArgs) ->
     {ok, Sup} = emqx_plugin_recovery_sup:start_link(),
     io:format("======Sup:~p~n", [Sup]),
-%%    emqx_plugin_recovery:load(application:get_all_env()),
+    emqx_plugin_recovery:load(application:get_all_env()),
     {ok, Sup}.
 
 stop(_State) ->

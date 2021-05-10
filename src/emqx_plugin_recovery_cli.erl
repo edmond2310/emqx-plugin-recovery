@@ -41,7 +41,7 @@ connect(Opts) ->
     io:format("Opts:~p~n", [Opts]),
     io:format("Host:~s, Port:~s~n", [Host, Port]),
     io:format("Database:(~w), Password:(~s)~n", [Database, Password]),
-    case eredis:start_link(
+    Res = case eredis:start_link(
                     Host,
                     Port,
                     Database,
@@ -58,7 +58,9 @@ connect(Opts) ->
             {error, Reason} ->
                 ?LOG(error, "[Redis] Can't connect to Redis server: ~p", [Reason]),
                 {error, Reason}
-    end.
+    end,
+    io:format("Res:~p~n", [Res]),
+    Res.
 
 %% Redis Query.
 q(Cmd, Timeout) ->
