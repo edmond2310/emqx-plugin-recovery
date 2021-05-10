@@ -92,7 +92,7 @@ on_client_connected(ClientInfo = #{clientid := ClientId}, ConnInfo, _Env) ->
   RecoveryRedisPassword = proplists:get_value(redis_password, BrokerValues),
   io:format("===========================~n", []),
   io:format("BrokerValues:~p~n", [BrokerValues]),
-  io:format("RecoveryRedisHost:~s, RecoveryRedisPort:~s~n", [RecoveryRedisHost, RecoveryRedisPort]),
+  io:format("RecoveryRedisHost:~s, RecoveryRedisPort:~w~n", [RecoveryRedisHost, RecoveryRedisPort]),
   io:format("RecoveryRedisDatabase:(~w), RecoveryRedisPassword:(~s)~n", [RecoveryRedisDatabase, RecoveryRedisPassword]),
   io:format("Client(~s) connected, ClientInfo:~n~p~n, ConnInfo:~n~p~n", [ClientId, ClientInfo, ConnInfo]).
 

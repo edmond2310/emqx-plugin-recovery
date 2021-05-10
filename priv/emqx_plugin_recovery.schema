@@ -7,7 +7,7 @@
 
 {mapping, "recovery.redis_port", "emqx_plugin_recovery.broker", [
   {default, "9092"},
-  {datatype, string}
+  {datatype, integer}
 ]}.
 
 {mapping, "recovery.redis_database", "emqx_plugin_recovery.broker", [

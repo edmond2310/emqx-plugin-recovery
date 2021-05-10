@@ -39,14 +39,13 @@ connect(Opts) ->
     Database = get_value(redis_database, Opts),
     Password = get_value(redis_password, Opts),
     io:format("Opts:~p~n", [Opts]),
-    io:format("Host:~s, Port:~s~n", [Host, Port]),
+    io:format("Host:~s, Port:~w~n", [Host, Port]),
     io:format("Database:(~w), Password:(~s)~n", [Database, Password]),
     Res = eredis:start_link(
         Host,
         Port,
         Database,
-        Password,
-        no_reconnect
+        Password
     ),
     io:format("Res:~p~n", [Res]),
     Res.
