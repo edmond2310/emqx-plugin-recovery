@@ -38,7 +38,7 @@ connect(Opts) ->
     Port = get_value(redis_port, Opts, 6379),
     Database = get_value(redis_database, Opts),
     Password = get_value(redis_password, Opts),
-    io:format("BrokerValues:~p~n", [Opts]),
+    io:format("Opts:~p~n", [Opts]),
     io:format("Host:~s, Port:~s~n", [Host, Port]),
     io:format("Database:(~w), Password:(~s)~n", [Database, Password]),
     case eredis:start_link(
