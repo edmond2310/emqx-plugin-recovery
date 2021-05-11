@@ -41,34 +41,23 @@ connect(Opts) ->
     io:format("Opts:~p~n", [Opts]),
     io:format("Host:~s, Port:~w~n", [Host, Port]),
     io:format("Database:(~w), Password:(~s)~n", [Database, Password]),
-    Res = eredis:start_link(
-        Host,
-        Port,
-        Database,
-        Password
-    ),
-    io:format("Res:~p~n", [Res]),
-    Res.
-%%    Res = case eredis:start_link(
-%%                    Host,
-%%                    Port,
-%%                    Database,
-%%                    Password,
-%%                    no_reconnect
-%%                ) of
-%%            {ok, Pid} -> {ok, Pid};
-%%            {error, Reason = {connection_error, _}} ->
-%%                ?LOG(error, "[Redis] Can't connect to Redis server: Connection refused."),
-%%                {error, Reason};
-%%            {error, Reason = {authentication_error, _}} ->
-%%                ?LOG(error, "[Redis] Can't connect to Redis server: Authentication failed."),
-%%                {error, Reason};
-%%            {error, Reason} ->
-%%                ?LOG(error, "[Redis] Can't connect to Redis server: ~p", [Reason]),
-%%                {error, Reason}
-%%    end,
-%%    io:format("Res:~p~n", [Res]),
-%%    Res.
+    case eredis:start_link(
+                    Host,
+                    Port,
+                    Database,
+                    Password
+                ) of
+            {ok, Pid} -> {ok, Pid};
+            {error, Reason = {connection_error, _}} ->
+                ?LOG(error, "[Redis] Can't connect to Redis server: Connection refused."),
+                {error, Reason};
+            {error, Reason = {authentication_error, _}} ->
+                ?LOG(error, "[Redis] Can't connect to Redis server: Authentication failed."),
+                {error, Reason};
+            {error, Reason} ->
+                ?LOG(error, "[Redis] Can't connect to Redis server: ~p", [Reason]),
+                {error, Reason}
+    end.
 
 %% Redis Query.
 q(Cmd, Timeout) ->
