@@ -161,12 +161,17 @@ on_message_publish(Message, _Env) ->
     Topic = Message#message.topic,
     io:format("payload ~p~n", [Message#message.payload]),
     io:format("timestamp ~p~n", [Message#message.timestamp]),
-    [Subscription | _] = emqx_mgmt:list_subscriptions_via_topic(Topic, fun format/1),
+    Subscriptions = emqx_mgmt:list_subscriptions_via_topic(Topic, fun format/1),
+    if
+        length(Subscriptions) > 0 ->
+            [Subscription | _] = Subscriptions,
+            io:format("node ~p~n", [maps:get(node, Subscription)]),
+            io:format("topic ~p~n", [maps:get(topic, Subscription)]),
+            io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
+            io:format("qos ~p~n", [maps:get(qos, Subscription)])
+    end,
     io:format("Subscription ~p~n", [Subscription]),
-    io:format("node ~p~n", [maps:get(node, Subscription)]),
-    io:format("topic ~p~n", [maps:get(topic, Subscription)]),
-    io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
-    io:format("qos ~p~n", [maps:get(qos, Subscription)]),
+
     {ok, Message}.
 
 on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
