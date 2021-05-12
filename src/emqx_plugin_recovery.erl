@@ -18,8 +18,6 @@
 
 -include_lib("emqx/include/emqx.hrl").
 
--import(emqx_mgmt_api_subscriptions, [format/1]).
-
 -export([ load/1
         , unload/0
         ]).
@@ -50,6 +48,9 @@
         , on_message_delivered/3
         , on_message_acked/3
         , on_message_dropped/4
+        ]).
+
+-export([ format/1
         ]).
 
 %% Called when the plugin application start
@@ -178,6 +179,19 @@ on_message_delivered(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
 on_message_acked(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
     io:format("Message acked by client(~s): ~s~n",
               [ClientId, emqx_message:format(Message)]).
+
+format(Items) when is_list(Items) ->
+    [format(Item) || Item <- Items];
+
+format({{Subscriber, Topic}, Options}) ->
+    format({Subscriber, Topic, Options});
+
+format({_Subscriber, Topic, Options = #{share := Group}}) ->
+    QoS = maps:get(qos, Options),
+    #{node => node(), topic => filename:join([<<"$share">>, Group, Topic]), clientid => maps:get(subid, Options), qos => QoS};
+format({_Subscriber, Topic, Options}) ->
+    QoS = maps:get(qos, Options),
+    #{node => node(), topic => Topic, clientid => maps:get(subid, Options), qos => QoS}.
 
 %% Called when the plugin application stop
 unload() ->
