@@ -18,6 +18,8 @@
 
 -include_lib("emqx/include/emqx.hrl").
 
+-import(emqx_mgmt_api_subscriptions, [format/1]).
+
 -export([ load/1
         , unload/0
         ]).
@@ -158,7 +160,7 @@ on_message_publish(Message, _Env) ->
     Topic = Message#message.topic,
     io:format("payload ~p~n", [Message#message.payload]),
     io:format("timestamp ~p~n", [Message#message.timestamp]),
-    Subscription = emqx_mgmt:list_subscriptions_via_topic(Topic, fun emqx_mgmt_api_subscriptions:format/1),
+    Subscription = emqx_mgmt:list_subscriptions_via_topic(Topic, fun format/1),
     io:format("Subscription ~p~n", [Subscription]),
     {ok, Message}.
 
