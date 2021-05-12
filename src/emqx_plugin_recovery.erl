@@ -168,10 +168,10 @@ on_message_publish(Message, _Env) ->
             io:format("node ~p~n", [maps:get(node, Subscription)]),
             io:format("topic ~p~n", [maps:get(topic, Subscription)]),
             io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
-            io:format("qos ~p~n", [maps:get(qos, Subscription)])
+            io:format("qos ~p~n", [maps:get(qos, Subscription)]);
+        true ->
+            io:format("Subscription ~p~n", [Subscriptions])
     end,
-    io:format("Subscription ~p~n", [Subscriptions]),
-
     {ok, Message}.
 
 on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
