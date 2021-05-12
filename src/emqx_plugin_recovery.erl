@@ -154,6 +154,9 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
 on_message_publish(Message, _Env) ->
     io:format("Publish ~s~n", [emqx_message:format(Message)]),
     io:format("Publish ~p~n", [Message]),
+    io:format("topic ~p~n", [Message#message.topic]),
+    io:format("payload ~p~n", [Message#message.payload]),
+    io:format("timestamp ~p~n", [Message#message.timestamp]),
     {ok, Message}.
 
 on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
