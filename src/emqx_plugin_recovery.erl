@@ -170,7 +170,7 @@ on_message_publish(Message, _Env) ->
             io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
             io:format("qos ~p~n", [maps:get(qos, Subscription)])
     end,
-    io:format("Subscription ~p~n", [Subscription]),
+    io:format("Subscription ~p~n", [Subscriptions]),
 
     {ok, Message}.
 
