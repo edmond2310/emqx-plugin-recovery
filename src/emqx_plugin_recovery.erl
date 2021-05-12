@@ -161,8 +161,12 @@ on_message_publish(Message, _Env) ->
     Topic = Message#message.topic,
     io:format("payload ~p~n", [Message#message.payload]),
     io:format("timestamp ~p~n", [Message#message.timestamp]),
-    Subscription = emqx_mgmt:list_subscriptions_via_topic(Topic, fun format/1),
+    [Subscription | _] = emqx_mgmt:list_subscriptions_via_topic(Topic, fun format/1),
     io:format("Subscription ~p~n", [Subscription]),
+    io:format("node ~p~n", [maps:get(node, Subscription)]),
+    io:format("topic ~p~n", [maps:get(topic, Subscription)]),
+    io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
+    io:format("qos ~p~n", [maps:get(qos, Subscription)]),
     {ok, Message}.
 
 on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
@@ -183,8 +187,16 @@ on_message_acked(_ClientInfo = #{clientid := ClientId}, Message, _Env) ->
 format(Items) when is_list(Items) ->
     [format(Item) || Item <- Items];
 
-format(Item) ->
-    Item.
+format({{Subscriber, Topic}, Options}) ->
+    format({Subscriber, Topic, Options});
+
+format({_Subscriber, Topic, Options = #{share := Group}}) ->
+    QoS = maps:get(qos, Options),
+    #{node => node(), topic => filename:join([<<"$share">>, Group, Topic]), clientid => maps:get(subid, Options), qos => QoS};
+
+format({_Subscriber, Topic, Options}) ->
+    QoS = maps:get(qos, Options),
+    #{node => node(), topic => Topic, clientid => maps:get(subid, Options), qos => QoS}.
 
 %% Called when the plugin application stop
 unload() ->
