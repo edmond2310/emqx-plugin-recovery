@@ -128,6 +128,9 @@ on_session_created(#{clientid := ClientId}, SessInfo, _Env) ->
     io:format("Session(~s) created, Session Info:~n~p~n", [ClientId, SessInfo]).
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
+    Msg = emqx_message:make(<<"admin">>, 2, Topic, <<"Hello World!">>),
+    emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
+    io:format("Msg ~p~n", [Msg]),
     io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
 
 on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
