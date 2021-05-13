@@ -196,9 +196,31 @@ get_subscription([]) ->
 get_subscription([Subscription | _]) ->
     io:format("node ~p~n", [maps:get(node, Subscription)]),
     io:format("topic ~p~n", [maps:get(topic, Subscription)]),
-    io:format("clientid ~p~n", [maps:get(clientid, Subscription)]),
     io:format("qos ~p~n", [maps:get(qos, Subscription)]),
+    ClientId = maps:get(clientid, Subscription),
+    io:format("ClientId ~p~n", [ClientId]),
+    Client = emqx_mgmt:lookup_client({clientid, ClientId}, fun format/1),
+    io:format("Client ~p~n", [Client]),
     ok.
+
+format(Items) when is_list(Items) ->
+    [format(Item) || Item <- Items];
+format(Key) when is_tuple(Key) ->
+    format(emqx_mgmt:item(client, Key));
+format(Data) when is_map(Data)->
+    {IpAddr, Port} = maps:get(peername, Data),
+    ConnectedAt = maps:get(connected_at, Data),
+    CreatedAt = maps:get(created_at, Data),
+    Data1 = maps:without([peername], Data),
+    maps:merge(Data1#{node         => node(),
+        ip_address   => iolist_to_binary(ntoa(IpAddr)),
+        port         => Port,
+        connected_at => iolist_to_binary(strftime(ConnectedAt div 1000)),
+        created_at   => iolist_to_binary(strftime(CreatedAt div 1000))},
+        case maps:get(disconnected_at, Data, undefined) of
+            undefined -> #{};
+            DisconnectedAt -> #{disconnected_at => iolist_to_binary(strftime(DisconnectedAt div 1000))}
+        end).
 
 %%on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
 %%    ok;
