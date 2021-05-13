@@ -23,34 +23,35 @@
         ]).
 
 %% Client Lifecircle Hooks
--export([ on_client_connect/3
-        , on_client_connack/4
-        , on_client_connected/3
-        , on_client_disconnected/4
-        , on_client_authenticate/3
-        , on_client_check_acl/5
-        , on_client_subscribe/4
-        , on_client_unsubscribe/4
-        ]).
+%%-export([ on_client_connect/3
+%%        , on_client_connack/4
+%%        , on_client_connected/3
+%%        , on_client_disconnected/4
+%%        , on_client_authenticate/3
+%%        , on_client_check_acl/5
+%%        , on_client_subscribe/4
+%%        , on_client_unsubscribe/4
+%%        ]).
 
 %% Session Lifecircle Hooks
--export([ on_session_created/3
-        , on_session_subscribed/4
-        , on_session_unsubscribed/4
-        , on_session_resumed/3
-        , on_session_discarded/3
-        , on_session_takeovered/3
-        , on_session_terminated/4
-        ]).
+%%-export([ on_session_created/3
+%%        , on_session_subscribed/4
+%%        , on_session_unsubscribed/4
+%%        , on_session_resumed/3
+%%        , on_session_discarded/3
+%%        , on_session_takeovered/3
+%%        , on_session_terminated/4
+%%        ]).
 
 %% Message Pubsub Hooks
--export([ on_message_publish/2
-        , on_message_delivered/3
-        , on_message_acked/3
-        , on_message_dropped/4
-        ]).
+%%-export([ on_message_publish/2
+%%        , on_message_delivered/3
+%%        , on_message_acked/3
+%%        , on_message_dropped/4
+%%        ]).
 
--export([ format/1
+-export([ on_session_subscribed/4
+        , on_message_publish/2
         ]).
 
 %% Called when the plugin application start
