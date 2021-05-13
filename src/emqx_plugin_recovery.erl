@@ -189,7 +189,10 @@ subscription_format({_Subscriber, Topic, Options}) ->
     QoS = maps:get(qos, Options),
     #{node => node(), topic => Topic, clientid => maps:get(subid, Options), qos => QoS}.
 
-to_redis([], 0, _Message) ->
+to_redis(_Subscriptions, 0, _Message) ->
+    ok;
+
+to_redis([], _QoS, _Message) ->
     ok;
 
 to_redis([Subscription | _], _QoS, Message) ->
