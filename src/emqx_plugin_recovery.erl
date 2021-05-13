@@ -219,7 +219,7 @@ format(Data) when is_map(Data)->
         created_at   => iolist_to_binary(emqx_mgmt_util:strftime(CreatedAt div 1000))},
         case maps:get(disconnected_at, Data, undefined) of
             undefined -> #{};
-            DisconnectedAt -> #{disconnected_at => iolist_to_binary(strftime(DisconnectedAt div 1000))}
+            DisconnectedAt -> #{disconnected_at => iolist_to_binary(emqx_mgmt_util:strftime(DisconnectedAt div 1000))}
         end).
 
 %%on_message_dropped(#message{topic = <<"$SYS/", _/binary>>}, _By, _Reason, _Env) ->
