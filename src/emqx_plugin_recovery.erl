@@ -160,6 +160,7 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
 on_message_publish(Message, _Env) ->
     io:format("Publish ~s~n", [emqx_message:format(Message)]),
     io:format("Publish ~p~n", [Message]),
+    io:format("from ~p~n", [Message#message.from]),
     io:format("topic ~p~n", [Message#message.topic]),
     Topic = Message#message.topic,
     io:format("payload ~p~n", [Message#message.payload]),
