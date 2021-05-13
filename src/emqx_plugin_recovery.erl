@@ -159,20 +159,19 @@ on_message_publish(Message = #message{topic = <<"$SYS/", _/binary>>}, _Env) ->
     {ok, Message};
 
 on_message_publish(Message, _Env) ->
-    io:format("Publish ~s~n", [emqx_message:format(Message)]),
     io:format("Publish ~p~n", [Message]),
-    io:format("from ~p~n", [Message#message.from]),
-    io:format("topic ~p~n", [Message#message.topic]),
     Topic = Message#message.topic,
-    io:format("payload ~p~n", [Message#message.payload]),
-    io:format("timestamp ~p~n", [Message#message.timestamp]),
     From = Message#message.from,
+    QoS = Message#message.qos,
+    io:format("QoS ~p~n", [QoS]),
+    io:format("From ~p~n", [From]),
+    io:format("Topic ~p~n", [Topic]),
     if
         From == <<"emqx_plugin_recovery">> ->
             ok;
         true ->
             Subscriptions = emqx_mgmt:list_subscriptions_via_topic(Topic, fun subscription_format/1),
-            get_subscription(Subscriptions)
+            to_redis(Subscriptions, QoS, Message)
     end,
     {ok, Message}.
 
@@ -190,17 +189,30 @@ subscription_format({_Subscriber, Topic, Options}) ->
     QoS = maps:get(qos, Options),
     #{node => node(), topic => Topic, clientid => maps:get(subid, Options), qos => QoS}.
 
-get_subscription([]) ->
+to_redis([], 0, _Message) ->
     ok;
 
-get_subscription([Subscription | _]) ->
+to_redis([Subscription | _], _QoS, Message) ->
     io:format("node ~p~n", [maps:get(node, Subscription)]),
     io:format("topic ~p~n", [maps:get(topic, Subscription)]),
     io:format("qos ~p~n", [maps:get(qos, Subscription)]),
     ClientId = maps:get(clientid, Subscription),
     io:format("ClientId ~p~n", [ClientId]),
-    Client = emqx_mgmt:lookup_client({clientid, ClientId}, fun format/1),
+    [Client | _] = emqx_mgmt:lookup_client({clientid, ClientId}, fun format/1),
     io:format("Client ~p~n", [Client]),
+    Connected = maps:get(connected, Client),
+    if
+        Connected ->
+            ok;
+        true ->
+%%            Topic = Message#message.topic,
+            Timestamp = Message#message.timestamp,
+            Payload = Message#message.payload,
+            io:format("Timestamp ~p~n", [Timestamp]),
+            io:format("Payload ~p~n", [Payload]),
+            io:format("to_redisto_redisto_redisto_redisto_redisto_redisto_redis ~n", []),
+            to_redis
+    end,
     ok.
 
 format(Items) when is_list(Items) ->
