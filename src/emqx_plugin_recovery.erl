@@ -205,7 +205,7 @@ to_redis([Subscription | _], _QoS, Message) ->
     io:format("Client ~p~n", [Client]),
     Connected = maps:get(connected, Client),
     if
-        Connected or Qos == 0 ->
+        Connected or (Qos == 0) ->
             ok;
         true ->
             Topic = Message#message.topic,
