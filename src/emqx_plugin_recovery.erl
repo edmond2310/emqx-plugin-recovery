@@ -214,12 +214,11 @@ to_redis([Subscription | _], _QoS, Message) ->
             io:format("Topic ~p~n", [Topic]),
             io:format("Timestamp ~p~n", [Timestamp]),
             io:format("Payload ~p~n", [Payload]),
-            io:format("to_redisto_redisto_redisto_redisto_redisto_redisto_redis ~n", []),
-            to_redis,
             KeyPre = <<"messages__">>,
-%%            MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
-            Res = emqx_plugin_recovery_cli:q(["HSET", <<"ddddddddd">>, Timestamp, Payload]),
-            io:format("Res ~p~n", [Res])
+            MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+            io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
+            Res = emqx_plugin_recovery_cli:q(["HSET", MsgRedisKey, Timestamp, Payload]),
+            io:format("HSET Res ~p~n", [Res])
     end,
     ok.
 
