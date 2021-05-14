@@ -171,6 +171,7 @@ on_message_publish(Message, _Env) ->
             ok;
         true ->
             Subscriptions = emqx_mgmt:list_subscriptions_via_topic(Topic, fun subscription_format/1),
+            io:format("Subscriptions ~p~n", [Subscriptions]),
             to_redis(Subscriptions, QoS, Message)
     end,
     {ok, Message}.
@@ -196,25 +197,29 @@ to_redis([], _QoS, _Message) ->
     ok;
 
 to_redis([Subscription | _], _QoS, Message) ->
-    io:format("node ~p~n", [maps:get(node, Subscription)]),
-    io:format("topic ~p~n", [maps:get(topic, Subscription)]),
-    io:format("qos ~p~n", [maps:get(qos, Subscription)]),
+    Qos = maps:get(qos, Subscription),
     ClientId = maps:get(clientid, Subscription),
+    io:format("Qos ~p~n", [Qos]),
     io:format("ClientId ~p~n", [ClientId]),
     [Client | _] = emqx_mgmt:lookup_client({clientid, ClientId}, fun format/1),
     io:format("Client ~p~n", [Client]),
     Connected = maps:get(connected, Client),
     if
-        Connected ->
+        Connected or Qos == 0 ->
             ok;
         true ->
-%%            Topic = Message#message.topic,
+            Topic = Message#message.topic,
             Timestamp = Message#message.timestamp,
             Payload = Message#message.payload,
+            io:format("Topic ~p~n", [Topic]),
             io:format("Timestamp ~p~n", [Timestamp]),
             io:format("Payload ~p~n", [Payload]),
             io:format("to_redisto_redisto_redisto_redisto_redisto_redisto_redis ~n", []),
-            to_redis
+            to_redis,
+            KeyPre = <<"messages__">>,
+%%            MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+            Res = emqx_plugin_recovery_cli:q(["HSET", <<"ddddddddd">>, Timestamp, Payload]),
+            io:format("Res ~p~n", [Res])
     end,
     ok.
 

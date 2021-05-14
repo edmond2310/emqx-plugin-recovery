@@ -26,6 +26,7 @@
 -import(proplists, [get_value/2, get_value/3]).
 
 -export([ connect/1
+        , q/1
         , q/2
         ]).
 
@@ -60,5 +61,8 @@ connect(Opts) ->
     end.
 
 %% Redis Query.
+q(Cmd) ->
+    q(Cmd, 5000).
+
 q(Cmd, Timeout) ->
     ecpool:with_client(?APP, fun(C) -> eredis:q(C, Cmd, Timeout) end).
