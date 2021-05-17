@@ -138,19 +138,18 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
             io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
             {ok, MsgKeys} = emqx_plugin_recovery_cli:q(["HKEYS", MsgRedisKey]),
             io:format("HKEYS MsgKeys ~p~n", [MsgKeys]),
-            MsgKeysSort = lists:sort(MsgKeys),
             lists:foreach(fun(Timestamp) ->
-                Payload = emqx_plugin_recovery_cli:q(["HGET", MsgRedisKey, Timestamp]),
-                io:format("HGET Payload ~p~n", [Payload])
+                {ok, Payload} = emqx_plugin_recovery_cli:q(["HGET", MsgRedisKey, Timestamp]),
+                io:format("HGET Payload ~p~n", [Payload]),
+                Msg = emqx_message:make(<<"emqx_plugin_recovery">>, 2, Topic, Payload),
+                emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
+                io:format("Msg ~p~n", [Msg])
                           end,
-                MsgKeysSort);
+                lists:sort(MsgKeys));
         true ->
             ok
     end,
 
-%%    Msg = emqx_message:make(<<"emqx_plugin_recovery">>, 2, Topic, <<"Hello World!">>),
-%%    emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
-%%    io:format("Msg ~p~n", [Msg]),
     io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
 
 %%on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
