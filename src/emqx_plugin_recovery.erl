@@ -129,9 +129,14 @@ load(Env) ->
 %%    io:format("Session(~s) created, Session Info:~n~p~n", [ClientId, SessInfo]).
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
-    Msg = emqx_message:make(<<"emqx_plugin_recovery">>, 2, Topic, <<"Hello World!">>),
-    emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
-    io:format("Msg ~p~n", [Msg]),
+    KeyPre = <<"messages__">>,
+    MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+    io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
+    Res = emqx_plugin_recovery_cli:q(["HKEYS", MsgRedisKey]),
+    io:format("HSET Res ~p~n", [Res]),
+%%    Msg = emqx_message:make(<<"emqx_plugin_recovery">>, 2, Topic, <<"Hello World!">>),
+%%    emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
+%%    io:format("Msg ~p~n", [Msg]),
     io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
 
 %%on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
