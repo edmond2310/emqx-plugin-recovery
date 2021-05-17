@@ -129,11 +129,25 @@ load(Env) ->
 %%    io:format("Session(~s) created, Session Info:~n~p~n", [ClientId, SessInfo]).
 
 on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
-    KeyPre = <<"messages__">>,
-    MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
-    io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
-    Res = emqx_plugin_recovery_cli:q(["HKEYS", MsgRedisKey]),
-    io:format("HSET Res ~p~n", [Res]),
+    IsNew = maps:get(is_new, SubOpts),
+    io:format("IsNew ~p~n", [IsNew]),
+    if
+        IsNew ->
+            KeyPre = <<"messages__">>,
+            MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+            io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
+            {ok, MsgKeys} = emqx_plugin_recovery_cli:q(["HKEYS", MsgRedisKey]),
+            io:format("HKEYS MsgKeys ~p~n", [MsgKeys]),
+            MsgKeysSort = lists:sort(MsgKeys),
+            lists:foreach(fun(Timestamp) ->
+                Payload = emqx_plugin_recovery_cli:q(["HGET", MsgRedisKey, Timestamp]),
+                io:format("HGET Payload ~p~n", [Payload])
+                          end,
+                MsgKeysSort);
+        true ->
+            ok
+    end,
+
 %%    Msg = emqx_message:make(<<"emqx_plugin_recovery">>, 2, Topic, <<"Hello World!">>),
 %%    emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
 %%    io:format("Msg ~p~n", [Msg]),
