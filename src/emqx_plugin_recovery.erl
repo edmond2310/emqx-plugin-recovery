@@ -145,7 +145,9 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
                 emqx_mgmt:publish(Msg#message{flags = #{retain => false}}),
                 io:format("Msg ~p~n", [Msg])
                           end,
-                lists:sort(MsgKeys));
+                lists:sort(MsgKeys)),
+            Res = emqx_plugin_recovery_cli:q(["DEL", MsgRedisKey]),
+            io:format("DEL Res ~p~n", [Res]);
         true ->
             ok
     end,
