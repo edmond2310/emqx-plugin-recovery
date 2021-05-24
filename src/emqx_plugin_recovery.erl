@@ -40,7 +40,6 @@
 %%        , on_session_resumed/3
 %%        , on_session_discarded/3
 %%        , on_session_takeovered/3
-%%        , on_session_terminated/4
 %%        ]).
 
 %% Message Pubsub Hooks
@@ -52,6 +51,7 @@
 
 -export([ on_session_subscribed/4
         , on_message_publish/2
+        , on_session_terminated/4
         ]).
 
 %% Called when the plugin application start
@@ -70,7 +70,7 @@ load(Env) ->
 %%    emqx:hook('session.resumed',     {?MODULE, on_session_resumed, [Env]}),
 %%    emqx:hook('session.discarded',   {?MODULE, on_session_discarded, [Env]}),
 %%    emqx:hook('session.takeovered',  {?MODULE, on_session_takeovered, [Env]}),
-%%    emqx:hook('session.terminated',  {?MODULE, on_session_terminated, [Env]}),
+    emqx:hook('session.terminated',  {?MODULE, on_session_terminated, [Env]}),
     emqx:hook('message.publish',     {?MODULE, on_message_publish, [Env]}).
 %%    emqx:hook('message.delivered',   {?MODULE, on_message_delivered, [Env]}),
 %%    emqx:hook('message.acked',       {?MODULE, on_message_acked, [Env]}),
@@ -166,9 +166,8 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
 %%on_session_takeovered(_ClientInfo = #{clientid := ClientId}, SessInfo, _Env) ->
 %%    io:format("Session(~s) is takeovered. Session Info: ~p~n", [ClientId, SessInfo]).
 %%
-%%on_session_terminated(_ClientInfo = #{clientid := ClientId}, Reason, SessInfo, _Env) ->
-%%    io:format("Session(~s) is terminated due to ~p~nSession Info: ~p~n",
-%%              [ClientId, Reason, SessInfo]).
+on_session_terminated(_ClientInfo = #{clientid := ClientId}, Reason, SessInfo, _Env) ->
+    io:format("Session(~s) is terminated due to ~p~nSession Info: ~p~n", [ClientId, Reason, SessInfo]).
 
 %%--------------------------------------------------------------------
 %% Message PubSub Hooks
@@ -292,7 +291,7 @@ unload() ->
 %%    emqx:unhook('session.resumed',     {?MODULE, on_session_resumed}),
 %%    emqx:unhook('session.discarded',   {?MODULE, on_session_discarded}),
 %%    emqx:unhook('session.takeovered',  {?MODULE, on_session_takeovered}),
-%%    emqx:unhook('session.terminated',  {?MODULE, on_session_terminated}),
+    emqx:unhook('session.terminated',  {?MODULE, on_session_terminated}),
     emqx:unhook('message.publish',     {?MODULE, on_message_publish}).
 %%    emqx:unhook('message.delivered',   {?MODULE, on_message_delivered}),
 %%    emqx:unhook('message.acked',       {?MODULE, on_message_acked}),
