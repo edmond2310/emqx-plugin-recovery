@@ -40,6 +40,7 @@
 %%        , on_session_resumed/3
 %%        , on_session_discarded/3
 %%        , on_session_takeovered/3
+%%        , on_session_terminated/4
 %%        ]).
 
 %% Message Pubsub Hooks
@@ -52,6 +53,7 @@
 -export([ on_session_subscribed/4
         , on_message_publish/2
         , on_session_terminated/4
+        , on_session_unsubscribed/4
         ]).
 
 %% Called when the plugin application start
@@ -66,7 +68,7 @@ load(Env) ->
 %%    emqx:hook('client.unsubscribe',  {?MODULE, on_client_unsubscribe, [Env]}),
 %%    emqx:hook('session.created',     {?MODULE, on_session_created, [Env]}),
     emqx:hook('session.subscribed',  {?MODULE, on_session_subscribed, [Env]}),
-%%    emqx:hook('session.unsubscribed',{?MODULE, on_session_unsubscribed, [Env]}),
+    emqx:hook('session.unsubscribed',{?MODULE, on_session_unsubscribed, [Env]}),
 %%    emqx:hook('session.resumed',     {?MODULE, on_session_resumed, [Env]}),
 %%    emqx:hook('session.discarded',   {?MODULE, on_session_discarded, [Env]}),
 %%    emqx:hook('session.takeovered',  {?MODULE, on_session_takeovered, [Env]}),
@@ -154,9 +156,14 @@ on_session_subscribed(#{clientid := ClientId}, Topic, SubOpts, _Env) ->
 
     io:format("Session(~s) subscribed ~s with subopts: ~p~n", [ClientId, Topic, SubOpts]).
 
-%%on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
-%%    io:format("Session(~s) unsubscribed ~s with opts: ~p~n", [ClientId, Topic, Opts]).
-%%
+on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
+    KeyPre = <<"messages__">>,
+    MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+    io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
+    Res = emqx_plugin_recovery_cli:q(["DEL", MsgRedisKey]),
+    io:format("DEL Res ~p~n", [Res]),
+    io:format("Session(~s) unsubscribed ~s with opts: ~p~n", [ClientId, Topic, Opts]).
+
 %%on_session_resumed(#{clientid := ClientId}, SessInfo, _Env) ->
 %%    io:format("Session(~s) resumed, Session Info:~n~p~n", [ClientId, SessInfo]).
 %%
@@ -287,7 +294,7 @@ unload() ->
 %%    emqx:unhook('client.unsubscribe',  {?MODULE, on_client_unsubscribe}),
 %%    emqx:unhook('session.created',     {?MODULE, on_session_created}),
     emqx:unhook('session.subscribed',  {?MODULE, on_session_subscribed}),
-%%    emqx:unhook('session.unsubscribed',{?MODULE, on_session_unsubscribed}),
+    emqx:unhook('session.unsubscribed',{?MODULE, on_session_unsubscribed}),
 %%    emqx:unhook('session.resumed',     {?MODULE, on_session_resumed}),
 %%    emqx:unhook('session.discarded',   {?MODULE, on_session_discarded}),
 %%    emqx:unhook('session.takeovered',  {?MODULE, on_session_takeovered}),
