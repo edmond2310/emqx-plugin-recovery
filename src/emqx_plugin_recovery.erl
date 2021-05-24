@@ -174,6 +174,18 @@ on_session_unsubscribed(#{clientid := ClientId}, Topic, Opts, _Env) ->
 %%    io:format("Session(~s) is takeovered. Session Info: ~p~n", [ClientId, SessInfo]).
 %%
 on_session_terminated(_ClientInfo = #{clientid := ClientId}, Reason, SessInfo, _Env) ->
+    Subscriptions = maps:get(subscriptions, SessInfo),
+    io:format("Subscriptions ~p~n", [Subscriptions]),
+    Topics = maps:keys(Subscriptions),
+    io:format("Topics ~p~n", [Topics]),
+    KeyPre = <<"messages__">>,
+    lists:foreach(fun(Topic) ->
+        MsgRedisKey = <<KeyPre/binary, Topic/binary>>,
+        io:format("MsgRedisKey ~p~n", [MsgRedisKey]),
+        Res = emqx_plugin_recovery_cli:q(["DEL", MsgRedisKey]),
+        io:format("DEL Res ~p~n", [Res])
+                  end,
+        Topics),
     io:format("Session(~s) is terminated due to ~p~nSession Info: ~p~n", [ClientId, Reason, SessInfo]).
 
 %%--------------------------------------------------------------------
